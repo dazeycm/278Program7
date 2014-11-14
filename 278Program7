@@ -1,0 +1,20 @@
+	.data
+msg1:	.asciiz "What is your name?"
+msg2:	.asciiz "When where you born?"
+msg3:	.asciiz "Who is your father?"
+msg4:	.asciiz "Are you still alive?"
+msg5:	.asciiz "Are you a ghost?"
+
+anw1:	.asciiz "My name is ENIAC"
+anw2:	.asciiz "I was born in 1946"
+anw3:	.asciiz "My father is Professor Mauchly"
+anw4:	.asciiz "No, I died in 1955"
+anw5:	.asciiz "...what do you think?"
+
+	.text
+main: 
+	sub $sp, $sp, 200
+	sw $fp, 0($sp)
+	sw $ra, 4($sp)
+	add $fp, $sp, 196
+
