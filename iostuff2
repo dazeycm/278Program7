@@ -1,0 +1,57 @@
+	.data
+#msg: 	.asciiz "hello there, how are you today"
+msg:	.asciiz "what is your name?"
+msg2:	.asciiz "when were you born"
+
+answer1:.asciiz "My name is ENIAC"
+answer2:.asciiz "I was born in 1943"	
+
+	.text
+main: 
+	subi $sp, $sp, 100
+	sw $ra, 0($sp)
+	sw $fp, 4($sp)
+	addi $fp, $sp, 96
+
+	li $t1, 0xffff0000	#control register for keyboard
+	li $t2, 0xffff0004	#read data from keyboard
+	li $t3, 0x2		#set bit 1 to 1 in control register, tells it you want to use the keyboard
+	sw $t3, 0($t1)
+
+	li $t1, 0xffff0008 	#control register of display device
+	li $t2, 0xffff000c	#actual data to display device
+	
+	move $t3, $zero
+	
+loop:
+	lw $t4, 0($t1)		#load to see if it's ready to print or not		Called IO Polling because you wait in a loop until the device is ready
+	andi $t4, $t4, 0x1	#gives 0 or 1
+	beqz $t4, loop		#if it's equal to zero, we gotta' wait
+	
+	lb $t5, msg($t3)
+	beqz $t5, exit		#if null character, break loop
+	
+	sb $t5, 0($t2)
+	addi $t3, $t3, 1
+	b loop
+
+exit: 
+	lw $ra, 96($sp)
+	lw $fp, 92($sp)
+	addi $sp, $sp, 100
+
+	.ktext	0x80000180
+	li $t9, 0xffff0004	#data register for keyboard
+	lb $t8, 0($t9)		#storing data register to $t8
+	sb $t8, 4($sp)		#store $t8 to stack
+	li $t8, 0		#store location of null terminated char
+	sb $t8, 5($sp)
+	
+	lb $a0, 4($sp)   	#address to print
+	li $v0, 4		#print string
+	syscall
+	
+	mfc0 $k0, $14		#coprocessor 0 register $14 has address of
+	addi $k0, $k0, 4	#add 4 to point to next instruction
+	mtc0 $k0, $14		#store new address back into $14
+	eret			#error return; set pc to value in $14
