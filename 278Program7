@@ -22,19 +22,48 @@ main:
 	li $t9, 0xffff0004	#what we're reading in
 	li $t7, 0x2		#load in value of 2
 	sw $t7, 0($t8)		#store value in control register - we're ready to read in keyboard
-	
-	addi $t0, $sp, 6	#set place in memory to store user input
+	addi $t1, $sp, 6	#store starting location
 	
 beforeLoop:
 	addi $t0, $sp, 6	#set place in memory to store user input
 	
-loop:	
 	
+loop:	
 	beq $t8, 0xA, newLineEntered	#idle loop, waiting for new line to be entered
 	j loop
 
 newLineEntered:
+	la $a0, msg1
+	move $a1, $t1 
+	#needs to check to see if match before calling the next one
 	
+	#should return something that indicates a match
+checksame:
+	subi $sp, $sp, 100
+	sw $ra, 0($sp)
+	sw $fp, 0($sp)
+	addi $fp, $sp, 96
+
+	#move	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	#all of these should jump back to loop
+printanw1:
+
+printanw2:
+
+printanw3:
+
+printanw4:
+
+printanw5:
 	
 	#while (input is not /n)
 	#	keep reading input
