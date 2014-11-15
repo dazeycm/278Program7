@@ -13,25 +13,28 @@ anw5:	.asciiz "...what do you think?"
 
 	.text
 main: 
-	sub $sp, $sp, 200
+	sub $sp, $sp, 500
 	sw $fp, 0($sp)
 	sw $ra, 4($sp)
-	add $fp, $sp, 196
+	add $fp, $sp, 496
 	
 	li $t8, 0xffff0000	#control register
 	li $t9, 0xffff0004	#what we're reading in
 	li $t7, 0x2		#load in value of 2
 	sw $t7, 0($t8)		#store value in control register - we're ready to read in keyboard
 	
-	addi $t0, $sp, 6
+	addi $t0, $sp, 6	#set place in memory to store user input
 	
+beforeLoop:
+	addi $t0, $sp, 6	#set place in memory to store user input
 	
-infiniteloop:
-	j loopendjk
-loopendjk:
-	j infiniteloop
+loop:	
+	
+	beq $t8, 0xA, newLineEntered	#idle loop, waiting for new line to be entered
+	j loop
 
-
+newLineEntered:
+	
 	
 	#while (input is not /n)
 	#	keep reading input
@@ -42,7 +45,7 @@ loopendjk:
 	
 	lw $fp, 0($sp)
 	lw $ra, 4($sp)
-	addi $sp, $sp, 200
+	addi $sp, $sp, 500
 	
 	.ktext 0x80000180
 	li $t9, 0xffff0004
@@ -51,7 +54,7 @@ loopendjk:
 	addi $t0, $t0, 1	#increase place in stack
 	
 	mfc0 $k0,$14   # Coprocessor 0 register $14 has address of trapping instruction
-  	addi $k0,$k0,4 # Add 4 to point to next instruction
+  	#addi $k0,$k0,4 # Add 4 to point to next instruction
   	mtc0 $k0,$14   # Store new address back into $14
    	eret           # Error return; set PC to value in $14
 
