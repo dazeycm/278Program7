@@ -22,39 +22,25 @@ main:
 	li $t9, 0xffff0004	#what we're reading in
 	li $t7, 0x2		#load in value of 2
 	sw $t7, 0($t8)		#store value in control register - we're ready to read in keyboard
-	addi $t1, $sp, 6	#store starting location
+	addi $t1, $sp, 6	#store starting location, should be in s register
 	
 beforeLoop:
+	#li $t0, '\0'
+	#sw $t0, 5($sp)
 	addi $t0, $sp, 6	#set place in memory to store user input
-	
 	
 loop:	
 	beq $t8, 0xA, newLineEntered	#idle loop, waiting for new line to be entered
+	
 	j loop
 
 newLineEntered:
 	la $a0, msg1
 	move $a1, $t1 
+	
+	jal checksame
 	#needs to check to see if match before calling the next one
-	
-	#should return something that indicates a match
-checksame:
-	subi $sp, $sp, 100
-	sw $ra, 0($sp)
-	sw $fp, 0($sp)
-	addi $fp, $sp, 96
 
-	#move	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	#all of these should jump back to loop
 printanw1:
 
 printanw2:
@@ -64,17 +50,61 @@ printanw3:
 printanw4:
 
 printanw5:
-	
-	#while (input is not /n)
-	#	keep reading input
-	#
-	#compare it to each string
-	#if (input is same as a msg question)
-	#	print answer
-	
+
+
+end:	
 	lw $fp, 0($sp)
 	lw $ra, 4($sp)
 	addi $sp, $sp, 500
+	
+
+			
+				
+					
+						
+							
+								
+										
+  								
+				
+checksame:			#should return something that indicates a match
+	subi $sp, $sp, 100
+	sw $ra, 0($sp)
+	sw $fp, 4($sp)
+	addi $fp, $sp, 96
+	li $t3, 15		#just check the first 15 chars
+	
+	move $t4, $a0 
+	move $t5, $a1
+checkloop:	
+	lb $t6, 0($t4)
+	lb $t7, 0($t5)
+	
+	beq $t6, $t7, increment
+	j notsame
+	
+increment:
+	addi $t4, $t4, 1
+	addi $t5, $t5, 1
+	subi $t3, $t3, 1
+	beqz $t3, same
+	j checkloop
+
+	
+same: 
+	li $v0, 1
+	j endfunction
+
+notsame:
+	li $v0, 0
+	j endfunction
+	
+endfunction:
+	lw $ra, 0($sp)
+	lw $fp, 4($sp)
+	addi $sp, $sp, 100
+	jr $ra
+	
 	
 	.ktext 0x80000180
 	li $t9, 0xffff0004
@@ -82,9 +112,9 @@ printanw5:
 	sb $t8, ($t0)		#store keyboard input into stack
 	addi $t0, $t0, 1	#increase place in stack
 	
-	mfc0 $k0,$14   # Coprocessor 0 register $14 has address of trapping instruction
-  	#addi $k0,$k0,4 # Add 4 to point to next instruction
-  	mtc0 $k0,$14   # Store new address back into $14
-   	eret           # Error return; set PC to value in $14
+	mfc0 $k0,$14   		# Coprocessor 0 register $14 has address of trapping instruction
+  	#addi $k0,$k0,4		# Add 4 to point to next instruction
+  	mtc0 $k0,$14   		# Store new address back into $14
+   	eret           		# Error return; set PC to value in $14
 
 
