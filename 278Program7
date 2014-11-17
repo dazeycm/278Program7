@@ -5,11 +5,11 @@ msg3:	.asciiz "Who is your father?"
 msg4:	.asciiz "Are you still alive?"
 msg5:	.asciiz "Are you a ghost?"
 
-anw1:	.asciiz "My name is ENIAC"
-anw2:	.asciiz "I was born in 1946"
-anw3:	.asciiz "My father is Professor Mauchly"
-anw4:	.asciiz "No, I died in 1955"
-anw5:	.asciiz "...what do you think?"
+anw1:	.asciiz "My name is ENIAC\n"
+anw2:	.asciiz "I was born in 1946\n"
+anw3:	.asciiz "My father is Professor Mauchly\n"
+anw4:	.asciiz "No, I died in 1955\n"
+anw5:	.asciiz "...what do you think?\n"
 
 	.text
 main: 
@@ -133,17 +133,7 @@ loop5:
 end:	
 	lw $fp, 0($sp)
 	lw $ra, 4($sp)
-	addi $sp, $sp, 500
-	
-
-			
-				
-					
-						
-							
-								
-										
-  								
+	addi $sp, $sp, 500						
 				
 checksame:			#should return something that indicates a match
 	subi $sp, $sp, 100
@@ -168,7 +158,6 @@ increment:
 	beqz $t3, same
 	j checkloop
 
-	
 same: 
 	li $v0, 1
 	j endfunction
@@ -178,8 +167,6 @@ notsame:
 	j endfunction
 	
 endfunction:
-
-	
 	lw $ra, 0($sp)
 	lw $fp, 4($sp)
 	addi $sp, $sp, 100
